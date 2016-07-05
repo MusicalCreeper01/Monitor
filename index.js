@@ -15,7 +15,7 @@ app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 
-/*
+
 var formatBytes = function(bytes, precision) {
   var kilobyte = 1024;
   var megabyte = kilobyte * 1024;
@@ -35,7 +35,7 @@ var formatBytes = function(bytes, precision) {
   } else {
     return bytes + ' B   ';
   }
-};*/
+};
 
 //windows and mac
 /*ps.list(function(err, results) {
@@ -95,7 +95,7 @@ function GetProcessesData (pid, command, callback){
     pusage.stat(pid, function(err, stat) {
         if(stat == undefined)
             return;
-        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": stat.memory});
+        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": formatBytes(stat.memory)});
     });
 }
 

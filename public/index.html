@@ -35,12 +35,12 @@
         </div>
         <div class="col-xs-8">
             <div class="wrapper">
-                <table id="process_table" class="table" style="color: gray;">
+                <table id="process_table" class="table" style="color: gray;overflow-y: auto;">
                     <thead>
                         <tr>
                             <th>PID</th>
                             <th>Command</th> 
-                            <th>CPU %</th>
+                            <th>CPU</th>
                             <th>RAM</th>
                         </tr>
                     </thead>
@@ -65,9 +65,12 @@
             //console.log(data);
             var tbody = $($('#process_table').children('tbody')[0]);
             tbody.html('');
-            for(element in data){
-                tbody.append("<tr><td>"+element.pid+"</td><td>"+element.command+"</td><td>"+element.cpu+"</td><td>"+element.ram+"</td></tr>");
-            }
+            var index;
+            for(index = 0; index < data.length; ++index){
+                var element = data[index];
+                tbody.append("<tr><td>"+element.pid+"</td><td>"+element.command+"</td><td>"+((element.cpu*100)/1).toFixed(2)+"%</td><td>"+element.ram+"</td></tr>");
+                console.log(JSON.stringify(element));
+	    }
         });
     </script>
 </body>
