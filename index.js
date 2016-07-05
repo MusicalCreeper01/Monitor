@@ -81,15 +81,17 @@ function GetProcessList (callback){
             GetProcessesData(results[index].pid, results[index].command, function(data){
                 p_data.push(data);
                 ++processed;
-                if(processed == results.length){
+                if(processed == results.length-1){
                     callback(p_data);
-                }
+                }else{
+			console.log(processed + "/" + results.length);
+		}
             });
         }
     }); 
 }
 
-function GetProcessesData (pid, commad, callback){
+function GetProcessesData (pid, command, callback){
     pusage.stat(pid, function(err, stat) {
         if(stat == undefined)
             return;
