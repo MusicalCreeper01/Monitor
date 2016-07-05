@@ -63,7 +63,7 @@
         
         socket.on('process_list', function(data){
             //console.log(data);
-            var tbody = $('#process_table').children('tbody')[0];
+            var tbody = $($('#process_table').children('tbody')[0]);
             tbody.html('');
             for(element in data){
                 tbody.append("<tr><td>"+element.pid+"</td><td>"+element.command+"</td><td>"+element.cpu+"</td><td>"+element.ram+"</td></tr>");
