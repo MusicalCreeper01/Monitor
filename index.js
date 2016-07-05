@@ -93,7 +93,7 @@ function GetProcessesData (pid, commad, callback){
     pusage.stat(pid, function(err, stat) {
         if(stat == undefined)
             return;
-        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": stat.memory};);
+        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": stat.memory});
     });
 }
 
