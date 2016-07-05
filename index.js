@@ -59,7 +59,7 @@ ps.list(function(err, results) {
         throw new Error( err );
     var index;
     console.log(results.length);
-    for (index = 0; index < 16; ++index) {
+    for (index = 0; index < results.length; ++index) {
         debugStats(results[index].pid);
     }
     //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
