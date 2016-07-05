@@ -1,21 +1,21 @@
 /* -- Imports -- */
+//Process information
+//Windows and mac
+//var ps = require('psnode');
+//var ps = require('ps-man');
+//var pusage = require('pidusage');
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 
-//Process information
-//Windows and mac
-//var ps = require('psnode');
-var ps = require('ps-man');
-var pusage = require('pidusage');
-
-var $ = require('jquery')
+var io = require('socket.io')(http);
 
 app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 
-
+/*
 var formatBytes = function(bytes, precision) {
   var kilobyte = 1024;
   var megabyte = kilobyte * 1024;
@@ -35,12 +35,7 @@ var formatBytes = function(bytes, precision) {
   } else {
     return bytes + ' B   ';
   }
-};
-
-
-/*app.get('/', function (req, res) {
-  res.send('Hello World!');
-});*/
+};*/
 
 //windows and mac
 /*ps.list(function(err, results) {
@@ -53,32 +48,73 @@ var formatBytes = function(bytes, precision) {
     }
     //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
 });*/
-
+/*
 ps.list(function(err, results) {
   if (err)
         throw new Error( err );
     var index;
     console.log(results.length);
     for (index = 0; index < results.length; ++index) {
-        debugStats(results[index].pid);
+        debugStats(results[index].pid, results[index].command);
     }
-    //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
-});
+});*/
 
-
-function debugStats(pid){
+/*
+function debugStats(pid, command){
     pusage.stat(pid, function(err, stat) {
         if(stat == undefined)
             return;
         
-        console.log("PID: %s - CPU: %s - RAM: %s", pid, stat.cpu, formatBytes(stat.memory));
-            //console.log('Pcpu: %s', stat.cpu)
-            //console.log('Mem: %s', stat.memory) //those are bytes
+        console.log("PID: %s - CPU: %s - RAM: %s - Command: %s", pid, stat.cpu, formatBytes(stat.memory), command);
+    });
+}*/
+
+function GetProcessList (callback){
+    ps.list(function(err, results) {
+        if (err)
+            throw new Error( err );
+        var index;
+        console.log(results.length + " processes");
+        var p_data = [];
+        var processed = 0;
+        for (index = 0; index < results.length; ++index) {
+            GetProcessesData(results[index].pid, results[index].command, function(data){
+                p_data.push(data);
+                ++processed;
+                if(processed == results.length){
+                    callback(p_data);
+                }
+            });
+        }
+    }); 
+}
+
+function GetProcessesData (pid, commad, callback){
+    pusage.stat(pid, function(err, stat) {
+        if(stat == undefined)
+            return;
+        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": stat.memory};);
     });
 }
 
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/public/index.html');
+});
 
+io.on('connection', function(socket){
+    console.log('a user connected');
+    
+    socket.on('ready', function(){
+        console.log("Preparing process list")
+        GetProcessList(function(data){
+            console.log("Sent process list")
+            socket.emit('process_list', data);
+            
+        });
+    });
+    
+});
 
-app.listen(3000, function () {
+http.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });

@@ -35,5 +35,14 @@
         </div>
         <div class="col-xs-8"></div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        
+        socket.on('process_list', function(data){
+            console.log(data);
+            
+        });
+    </script>
 </body>
 </html>
