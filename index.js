@@ -2,8 +2,8 @@
 //Process information
 //Windows and mac
 //var ps = require('psnode');
-//var ps = require('ps-man');
-//var pusage = require('pidusage');
+var ps = require('ps-man');
+var pusage = require('pidusage');
 
 var express = require('express');
 var app = express();
