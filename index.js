@@ -4,7 +4,9 @@ var app = express();
 var http = require('http').Server(app);
 
 //Process information
-var ps = require('psnode');
+//Windows and mac
+//var ps = require('psnode');
+var ps = require('ps-man');
 var pusage = require('pidusage');
 
 var $ = require('jquery')
@@ -40,12 +42,24 @@ var formatBytes = function(bytes, precision) {
   res.send('Hello World!');
 });*/
 
-ps.list(function(err, results) {
+//windows and mac
+/*ps.list(function(err, results) {
     if (err)
         throw new Error( err );
     var index;
     console.log(results.length);
     for (index = 0; index < results.length; ++index) {
+        debugStats(results[index].pid);
+    }
+    //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
+});*/
+
+ps.list(function(err, results) {
+  if (err)
+        throw new Error( err );
+    var index;
+    console.log(results.length);
+    for (index = 0; index < 16; ++index) {
         debugStats(results[index].pid);
     }
     //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
