@@ -7,8 +7,6 @@ var http = require('http').Server(app);
 var ps = require('psnode');
 var pusage = require('pidusage');
 
-var usage = require('usage');
-
 var $ = require('jquery')
 
 app.use(express.static(__dirname + '/public'));
@@ -42,10 +40,6 @@ var formatBytes = function(bytes, precision) {
   res.send('Hello World!');
 });*/
 
-usage.lookup(4, function(err, result) {
-    console.log(result);
-});
-/*
 ps.list(function(err, results) {
     if (err)
         throw new Error( err );
@@ -55,23 +49,18 @@ ps.list(function(err, results) {
         debugStats(results[index].pid);
     }
     //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
-});*/
+});
 
 
 function debugStats(pid){
-    usage.lookup(pid, function(err, result) {
-        if(result == undefined)
-            return;
-        console.log(result);
-    });
-    /*pusage.stat(pid, function(err, stat) {
+    pusage.stat(pid, function(err, stat) {
         if(stat == undefined)
             return;
         
         console.log("PID: %s - CPU: %s - RAM: %s", pid, stat.cpu, formatBytes(stat.memory));
             //console.log('Pcpu: %s', stat.cpu)
             //console.log('Mem: %s', stat.memory) //those are bytes
-    });*/
+    });
 }
 
 
