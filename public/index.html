@@ -30,7 +30,7 @@
             <div class="wrapper">
                 <form class="form-horizontal">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for...">
+                        <input type="text" id="search-input" class="form-control" placeholder="Search for...">
                         <span class="input-group-btn">
                             <button class="btn btn-default btn-search" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                         </span>
@@ -94,6 +94,7 @@
 					{ data: 2 },
 					{ data: 3 }
 				],
+				bFilter: false,
 				createdRow: function ( row, data, index ) {
 					$('td', row).eq(3).attr('data-sort', $('td', row).eq(3).html());
 					$('td', row).eq(3).html(formatBytes($('td', row).eq(3).html()));
@@ -106,6 +107,10 @@
 			console.log("refreshing data");
 			table.ajax.reload(null, false);
 		}, 10000 );
+
+		$('#search-input').keyup(function(){
+			  table.search($(this).val()).draw() ;
+		})
 /*
         var socket = io();
 
