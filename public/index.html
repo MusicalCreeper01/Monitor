@@ -37,9 +37,16 @@
                     </div>
                 </form>
             </div>
+
+			<ul class="menu">
+				<li class="active" el="processes">Processess</li>
+				<li el="system">System</li>
+				<li el="terminal">Terminal</li>
+				<li el="status">Status</li>
+			</ul>
         </div>
         <div class="col-xs-8">
-            <div class="wrapper">
+            <div class="wrapper tab processes">
                 <table id="process_table" class="table table-condensed" style="color: gray;overflow-y: auto;">
                     <thead>
                         <tr>
@@ -50,16 +57,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>0</td>
-                            <td>nodejs</td>
-                            <td>0%</td>
-                            <td>0MB</td>
-                        </tr>
                     </tbody>
                 </table>
-
             </div>
+			<div class="wrapper tab system">
+				<h3 id="os">OS: Linux - Ubuntu</h3>
+				<h3 id="os-version">Version: 14.0.2 LTS</h3>
+			</div>
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -94,7 +98,7 @@
 					{ data: 2 },
 					{ data: 3 }
 				],
-				bFilter: false,
+				//bFilter: false,
 				createdRow: function ( row, data, index ) {
 					$('td', row).eq(3).attr('data-sort', $('td', row).eq(3).html());
 					$('td', row).eq(3).html(formatBytes($('td', row).eq(3).html()));
@@ -108,9 +112,23 @@
 			table.ajax.reload(null, false);
 		}, 10000 );
 
+		$.ajax({url: "sys_info", success: function(result){
+			$('#os').html("Operating System: " + result.os);
+			$('#os-version').html("Version: " + result.version);
+		}});
+
+
 		$('#search-input').keyup(function(){
 			  table.search($(this).val()).draw() ;
 		})
+
+
+		$('.menu li').click(function(){
+			$('.menu li').removeClass("active");
+			$(this).addClass("active");		
+			$(".tab").hide();
+			$(".tab." + $(this).attr('el')).show();
+		});
 /*
         var socket = io();
 

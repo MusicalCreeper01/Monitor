@@ -27,3 +27,37 @@ input[type="text"], input[type="search"]{
     box-shadow: none !important;
     color: white;
 }
+
+.dataTables_filter, .dataTables_info { 
+	display: none; 
+}
+
+.menu{
+	text-decoration: none;
+	list-style: none;
+	text-align: center;
+padding: 0px 40px;
+}
+.menu li{
+	background-color: #434857;
+	border: 1px solid #434857 !important;
+	border-radius: 5px;
+	padding: 10px;
+	color: white;
+	margin: 10px;
+}
+.menu li:hover, .menu li.active:hover{
+	background-color: #3E7B80;
+	border: 1px solid #3E7B80 !important;
+}
+.menu li.active{
+	background-color: #3E4F80;
+	border: 1px solid #3E4F80 !important;
+}
+
+.tab {
+	display: none;
+}
+.tab.processes{
+	display: inherit;
+}

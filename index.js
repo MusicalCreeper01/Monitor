@@ -13,6 +13,8 @@ var io = require('socket.io')(http);
 
 var cron = require('node-cron');
 
+var os = require('os');
+
 app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
@@ -57,7 +59,7 @@ function GetProcessList (callback){
                 if(processed == results.length-1){
 					last_process_update = p_data;
 					callback(p_data);
-                }else{
+                }else{var os = require('os');
 			//console.log(processed + "/" + results.length);
 		}
             });
@@ -95,6 +97,10 @@ app.get('/', function (req, res) {
 
 app.get('/process_info', function (req, res) {
 	res.send(200, { "data":last_process_update});
+});
+
+app.get('/sys_info', function (req, res) {
+	res.send(200, { "os": os.platform(), "version": os.release(), "arch": os.arch(), "type": os.type(), "cpu": os.cpus(), "freemem": os.freemem(), "totalmem": os.totalmem(), "hostname": os.hostname(), "uptime": os.uptime(), });
 });
 
 io.on('connection', function(socket){
