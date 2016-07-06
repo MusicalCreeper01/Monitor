@@ -61,8 +61,11 @@
                 </table>
             </div>
 			<div class="wrapper tab system">
-				<h3 id="os">OS: Linux - Ubuntu</h3>
-				<h3 id="os-version">Version: 14.0.2 LTS</h3>
+				<h3 id="os">Operating System:</h3>
+				<h3 id="os-version">Version:</h3>
+				<h3 id="external-ip">External IP:</h3>
+				<h3 id="cores">CPU Cores: </h3>
+				<h3 id="memory">Memory:</h3>
 			</div>
         </div>
     </div>
@@ -113,8 +116,23 @@
 		}, 10000 );
 
 		$.ajax({url: "sys_info", success: function(result){
-			$('#os').html("Operating System: " + result.os);
-			$('#os-version').html("Version: " + result.version);
+			if(result.os == 'linux'){
+				$('#os').html("Operating System: " + result['linux-info'].dist + " " + result.arch);
+				$('#os-version').html("Version: " + result['linux-info'].codename + " - " + result['linux-info'].release);
+				$('#external-ip').html("External IP: " + result.hostname + " - " + result.externalip);
+				$('#cores').html("CPU Cores: " + result.cpu.length);
+				$('#memory').html("Memory: " + formatBytes(result.totalmem, 2));
+			}
+			else{
+				$('#os').html("Operating System: " + result.type + " " + result.arch);
+				$('#os-version').html("Version: " + result.os + " - " + result.version);
+				$('#external-ip').html("External IP: " + result.hostname + " - " + result.externalip);
+				$('#cores').html("CPU Cores: " + result.cpu.length);
+				$('#memory').html("Memory: " + formatBytes(result.totalmem, 2));
+			}
+/*<h3 id="external-ip">0.0.0.0</h3>
+				<h3 id="cores">6</h3>
+				<h3 id="memory">16GB</h3>*/
 		}});
 
 

@@ -15,12 +15,19 @@ var cron = require('node-cron');
 
 var os = require('os');
 
+var getIP = require('external-ip')();
+var getos = require('getos')
+
+
 app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
 
 
 var last_process_update = [];
+
+var external_ip = '';
+var linux_os_info = '';
 
 
 var formatBytes = function(bytes, precision) {
@@ -100,7 +107,8 @@ app.get('/process_info', function (req, res) {
 });
 
 app.get('/sys_info', function (req, res) {
-	res.send(200, { "os": os.platform(), "version": os.release(), "arch": os.arch(), "type": os.type(), "cpu": os.cpus(), "freemem": os.freemem(), "totalmem": os.totalmem(), "hostname": os.hostname(), "uptime": os.uptime(), });
+	res.send(200, { "os": os.platform(), "version": os.release(), "arch": os.arch(), "type": os.type(), "cpu": os.cpus(), "freemem": os.freemem(), "totalmem": os.totalmem(), "hostname": os.hostname(), "uptime": os.uptime(), "externalip": external_ip, "linux-info": linux_os_info});
+
 });
 
 io.on('connection', function(socket){
@@ -116,10 +124,27 @@ io.on('connection', function(socket){
     });
     
 });
-GetProcessList(function(data){
-	console.log("Getting initial process list")
-	http.listen(3000, function () {
-	  console.log('Listening on port 3000!');
-	});
-});
 
+if(os.platform() == 'linux'){
+	getos(function(e,os) {
+	  if(e) return console.log(e)
+		linux_os_info = os;
+	})
+}
+
+getIP(function (err, ip) {
+    if (err) {
+		console.log('Failed to fetch external IP');		
+//        throw err;
+    }
+	external_ip = ip;
+	console.log('External IP: ' + ip);
+
+	GetProcessList(function(data){
+		console.log("Getting initial process list")
+		http.listen(3000, function () {
+		  console.log('Listening on port 3000!');
+		});
+	});
+
+});
