@@ -11,9 +11,14 @@ var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
+var cron = require('node-cron');
+
 app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
 app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/'));
+
+
+var last_process_update = [];
 
 
 var formatBytes = function(bytes, precision) {
@@ -37,38 +42,6 @@ var formatBytes = function(bytes, precision) {
   }
 };
 
-//windows and mac
-/*ps.list(function(err, results) {
-    if (err)
-        throw new Error( err );
-    var index;
-    console.log(results.length);
-    for (index = 0; index < results.length; ++index) {
-        debugStats(results[index].pid);
-    }
-    //console.log(results); // [{pid: 2352, command: 'command'}, {...}] 
-});*/
-/*
-ps.list(function(err, results) {
-  if (err)
-        throw new Error( err );
-    var index;
-    console.log(results.length);
-    for (index = 0; index < results.length; ++index) {
-        debugStats(results[index].pid, results[index].command);
-    }
-});*/
-
-/*
-function debugStats(pid, command){
-    pusage.stat(pid, function(err, stat) {
-        if(stat == undefined)
-            return;
-        
-        console.log("PID: %s - CPU: %s - RAM: %s - Command: %s", pid, stat.cpu, formatBytes(stat.memory), command);
-    });
-}*/
-
 function GetProcessList (callback){
     ps.list(function(err, results) {
         if (err)
@@ -82,9 +55,10 @@ function GetProcessList (callback){
                 p_data.push(data);
                 ++processed;
                 if(processed == results.length-1){
-                    callback(p_data);
+					last_process_update = p_data;
+					callback(p_data);
                 }else{
-			console.log(processed + "/" + results.length);
+			//console.log(processed + "/" + results.length);
 		}
             });
         }
@@ -95,12 +69,32 @@ function GetProcessesData (pid, command, callback){
     pusage.stat(pid, function(err, stat) {
         if(stat == undefined)
             return;
-        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": formatBytes(stat.memory)});
+//        callback({"pid": pid, "command": command, "cpu": stat.cpu, "ram": stat.memory});
+		callback([pid, command, stat.cpu, stat.memory]);
+		pusage.unmonitor(pid);
     });
 }
+/*
+cron.schedule('* * * * *', function(){
+	GetProcessList(function(data){
+	    console.log("Updated process list")
+	    //io.emit('process_list', data);
+	});
+});*/
+
+setInterval( function () {
+	GetProcessList(function(data){
+	    console.log("Updated process list")
+	    //io.emit('process_list', data);
+	});
+}, 10000 );
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/process_info', function (req, res) {
+	res.send(200, { "data":last_process_update});
 });
 
 io.on('connection', function(socket){
@@ -116,7 +110,10 @@ io.on('connection', function(socket){
     });
     
 });
-
-http.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+GetProcessList(function(data){
+	console.log("Getting initial process list")
+	http.listen(3000, function () {
+	  console.log('Listening on port 3000!');
+	});
 });
+

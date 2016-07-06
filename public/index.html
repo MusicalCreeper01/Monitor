@@ -64,26 +64,52 @@
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+		var formatBytes = function(bytes, precision) {
+			var kilobyte = 1024;
+			var megabyte = kilobyte * 1024;
+			var gigabyte = megabyte * 1024;
+			var terabyte = gigabyte * 1024;
+
+			if ((bytes >= 0) && (bytes < kilobyte)) {
+				return bytes + ' B   ';
+			} else if ((bytes >= kilobyte) && (bytes < megabyte)) {
+				return (bytes / kilobyte).toFixed(precision) + ' KB  ';
+			} else if ((bytes >= megabyte) && (bytes < gigabyte)) {
+				return (bytes / megabyte).toFixed(precision) + ' MB  ';
+			} else if ((bytes >= gigabyte) && (bytes < terabyte)) {
+				return (bytes / gigabyte).toFixed(precision) + ' GB  ';
+			} else if (bytes >= terabyte) {
+				return (bytes / terabyte).toFixed(precision) + ' TB  ';
+			} else {
+				return bytes + ' B   ';
+			}
+		};
+
+
+		var table = $('#process_table').DataTable( {
+				ajax: '/process_info',
+				columns: [
+					{ data: 0 },
+					{ data: 1 },
+					{ data: 2 },
+					{ data: 3 }
+				],
+				createdRow: function ( row, data, index ) {
+					$('td', row).eq(3).attr('data-sort', $('td', row).eq(3).html());
+					$('td', row).eq(3).html(formatBytes($('td', row).eq(3).html()));
+					$('td', row).eq(2).html(parseInt($('td', row).eq(3).html()).toFixed(2));
+				}
+			});
+			console.log(table);
+
+		setInterval( function () {
+			console.log("refreshing data");
+			table.ajax.reload(null, false);
+		}, 10000 );
+/*
         var socket = io();
-        
-        socket.on('process_list', function(data){
-            //console.log(data);
-            var tbody = $($('#process_table').children('tbody')[0]);
-            tbody.html('');
-            var index;
-            for(index = 0; index < data.length; ++index){
-                var element = data[index];
-                var cl = "";
-                if(element.cpu > 0.5)
-                    cl = "danger";
-                tbody.append("<tr class='"+cl+"'><td>"+element.pid+"</td><td>"+element.command+"</td><td>"+((element.cpu*100)/1).toFixed(2)+"%</td><td>"+element.ram+"</td></tr>");
-                console.log(JSON.stringify(element));
-	    }
 
-	    $('#process_table').dataTable();
-        });
-
-	socket.emit('ready');
+		socket.emit('ready');*/
     </script>
 </body>
 </html>
