@@ -27,3 +27,9 @@ Run commands as the user running the nodejs process in a terminal section.
 If you get error while installing that suggest an outdated Node version, or if `node .` if refered to as "legacy", you MUST make sure your running the latest Node and NPM builds. 
 
 Note that on Ubuntu you will need to add a Node package repository in order to get the latest version. Ask me how I know ;) 
+
+# Support
+
+If you'd like to help support my projects:
+
+Patreon: https://www.patreon.com/keithm
