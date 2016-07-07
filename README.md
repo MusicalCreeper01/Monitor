@@ -14,6 +14,14 @@ After that finishes, start the server with:
 
 `node .`
 
+# Features
+
+List all running processess, memory usage, CPU usage, in a searchable and sortable table. 
+
+See information such as operatiing system type and version, external IP address, hostname and internal IP, etc
+
+Run commands as the user running the nodejs process in a terminal section. 
+
 #Errors
 
 If you get error while installing that suggest an outdated Node version, or if `node .` if refered to as "legacy", you MUST make sure your running the latest Node and NPM builds. 
