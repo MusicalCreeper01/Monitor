@@ -39,9 +39,9 @@
             </div>
 
 			<ul class="menu">
-				<li class="active" el="processes">Processess</li>
+				<li class="active" el="processes">Processes</li>
 				<li el="system">System</li>
-				<li el="terminal">Terminal</li>
+				<li el="console">Console</li>
 				<li el="status">Status</li>
 			</ul>
         </div>
@@ -64,8 +64,13 @@
 				<h3 id="os">Operating System:</h3>
 				<h3 id="os-version">Version:</h3>
 				<h3 id="external-ip">External IP:</h3>
+				<h3 id="internal-ip">Internal IP:</h3>
 				<h3 id="cores">CPU Cores: </h3>
 				<h3 id="memory">Memory:</h3>
+			</div>
+			<div class="wrapper tab console">
+				<textarea id="console-output" autocomplete="off" readonly>Logged into console as: </textarea>
+				<input id="command-input" type="text"></input>
 			</div>
         </div>
     </div>
@@ -119,20 +124,22 @@
 			if(result.os == 'linux'){
 				$('#os').html("Operating System: " + result['linux-info'].dist + " " + result.arch);
 				$('#os-version').html("Version: " + result['linux-info'].codename + " - " + result['linux-info'].release);
-				$('#external-ip').html("External IP: " + result.hostname + " - " + result.externalip);
-				$('#cores').html("CPU Cores: " + result.cpu.length);
-				$('#memory').html("Memory: " + formatBytes(result.totalmem, 2));
 			}
 			else{
 				$('#os').html("Operating System: " + result.type + " " + result.arch);
 				$('#os-version').html("Version: " + result.os + " - " + result.version);
-				$('#external-ip').html("External IP: " + result.hostname + " - " + result.externalip);
+				
+			}
+
+				$('#external-ip').html("External IP: " + result.externalip);
+				$('#internal-ip').html("Internal IP: " + result.hostname + " - " + result.ip);
 				$('#cores').html("CPU Cores: " + result.cpu.length);
 				$('#memory').html("Memory: " + formatBytes(result.totalmem, 2));
-			}
 /*<h3 id="external-ip">0.0.0.0</h3>
 				<h3 id="cores">6</h3>
 				<h3 id="memory">16GB</h3>*/
+
+				$('#console-output').val($('#console-output').val() + result.username); 
 		}});
 
 

@@ -18,6 +18,8 @@ var os = require('os');
 var getIP = require('external-ip')();
 var getos = require('getos')
 
+var ip = require('ip');
+
 
 app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
@@ -28,6 +30,9 @@ var last_process_update = [];
 
 var external_ip = '';
 var linux_os_info = '';
+
+var serverprofile = {};
+var sprof = require("server-profile");
 
 
 var formatBytes = function(bytes, precision) {
@@ -107,7 +112,7 @@ app.get('/process_info', function (req, res) {
 });
 
 app.get('/sys_info', function (req, res) {
-	res.send(200, { "os": os.platform(), "version": os.release(), "arch": os.arch(), "type": os.type(), "cpu": os.cpus(), "freemem": os.freemem(), "totalmem": os.totalmem(), "hostname": os.hostname(), "uptime": os.uptime(), "externalip": external_ip, "linux-info": linux_os_info});
+	res.send(200, { "os": os.platform(), "version": os.release(), "arch": os.arch(), "type": os.type(), "cpu": os.cpus(), "freemem": os.freemem(), "totalmem": os.totalmem(), "hostname": os.hostname(), "uptime": os.uptime(), "externalip": external_ip, "linux-info": linux_os_info, "profile": serverprofile, "ip": ip.address(), "username": process.env.USER});
 
 });
 
@@ -131,20 +136,23 @@ if(os.platform() == 'linux'){
 		linux_os_info = os;
 	})
 }
+sprof.fetchProfile().then(function(profile) {
+	serverprofile = profile;
+	console.log("I am " + profile.getName()); // I am wary-rabbits
+	getIP(function (err, ip) {
+		if (err) {
+			console.log('Failed to fetch external IP');		
+	//        throw err;
+		}
+		external_ip = ip;
+		console.log('External IP: ' + ip);
 
-getIP(function (err, ip) {
-    if (err) {
-		console.log('Failed to fetch external IP');		
-//        throw err;
-    }
-	external_ip = ip;
-	console.log('External IP: ' + ip);
-
-	GetProcessList(function(data){
-		console.log("Getting initial process list")
-		http.listen(3000, function () {
-		  console.log('Listening on port 3000!');
+		GetProcessList(function(data){
+			console.log("Getting initial process list")
+			http.listen(3000, function () {
+			  console.log('Listening on port 3000!');
+			});
 		});
 	});
-
 });
+
