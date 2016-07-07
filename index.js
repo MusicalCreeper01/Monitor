@@ -20,6 +20,7 @@ var getos = require('getos')
 
 var ip = require('ip');
 
+var cmd=require('node-cmd');
 
 app.use(express.static(__dirname + '/public'));
 app.use('/jquery', express.static(__dirname + '/node_modules/jquery/'));
@@ -114,6 +115,15 @@ app.get('/process_info', function (req, res) {
 app.get('/sys_info', function (req, res) {
 	res.send(200, { "os": os.platform(), "version": os.release(), "arch": os.arch(), "type": os.type(), "cpu": os.cpus(), "freemem": os.freemem(), "totalmem": os.totalmem(), "hostname": os.hostname(), "uptime": os.uptime(), "externalip": external_ip, "linux-info": linux_os_info, "profile": serverprofile, "ip": ip.address(), "username": process.env.USER});
 
+});
+
+app.get('/cmd/:cmd', function (req, res) {
+	cmd.get(
+        req.params.cmd,
+        function(data){
+				res.send(200, data);
+        }
+    );	
 });
 
 io.on('connection', function(socket){

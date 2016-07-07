@@ -147,6 +147,17 @@
 			  table.search($(this).val()).draw() ;
 		})
 
+		$('#command-input').keyup(function(e){
+			if(e.keyCode == 13)
+			{
+				$.ajax({url: "cmd/"+$('#command-input').val(), success: function(result){
+					$('#console-output').val($('#console-output').val() + "\n" + result); 
+					$('#console-output').scrollTop($('#console-output')[0].scrollHeight);
+				}});
+				$('#command-input').val('');
+			}
+		});
+
 
 		$('.menu li').click(function(){
 			$('.menu li').removeClass("active");
