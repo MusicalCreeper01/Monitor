@@ -42,11 +42,15 @@
 				<li class="active" el="processes">Processes</li>
 				<li el="system">System</li>
 				<li el="console">Console</li>
-				<li el="status">Status</li>
 			</ul>
         </div>
         <div class="col-xs-8">
             <div class="wrapper tab processes">
+				<div class="progress">
+					<div id="memory-bar" class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+						<span class="sr-only">20% Complete</span>
+					</div>
+				</div>
                 <table id="process_table" class="table table-condensed" style="color: gray;overflow-y: auto;">
                     <thead>
                         <tr>
@@ -118,6 +122,12 @@
 		setInterval( function () {
 			console.log("refreshing data");
 			table.ajax.reload(null, false);
+			$.ajax({url: "sys_info", success: function(result){
+					$('#memory-bar').attr('aria-valuemax', result.totalmem);
+					$('#memory-bar').attr('aria-valuenow', result.totalmem - result.freemem);
+					$('#memory-bar').css('width', (((result.totalmem - result.freemem) * 100) / result.totalmem) + "%");
+					$('#memory-bar, #memory-bar span').html((((result.totalmem - result.freemem) * 100) / result.totalmem).toFixed(2) + "% Used Memory");
+			}});
 		}, 10000 );
 
 		$.ajax({url: "sys_info", success: function(result){
@@ -140,6 +150,11 @@
 				<h3 id="memory">16GB</h3>*/
 
 				$('#console-output').val($('#console-output').val() + result.username); 
+
+				$('#memory-bar').attr('aria-valuemax', result.totalmem);
+				$('#memory-bar').attr('aria-valuenow', result.totalmem - result.freemem);
+				$('#memory-bar').css('width', (((result.totalmem - result.freemem) * 100) / result.totalmem) + "%");
+				$('#memory-bar, #memory-bar span').html((((result.totalmem - result.freemem) * 100) / result.totalmem).toFixed(2) + "% Used Memory");
 		}});
 
 
@@ -150,6 +165,7 @@
 		$('#command-input').keyup(function(e){
 			if(e.keyCode == 13)
 			{
+				$('#console-output').val($('#console-output').val() + "\n$>" + $('#command-input').val()); 
 				$.ajax({url: "cmd/"+$('#command-input').val(), success: function(result){
 					$('#console-output').val($('#console-output').val() + "\n" + result); 
 					$('#console-output').scrollTop($('#console-output')[0].scrollHeight);
